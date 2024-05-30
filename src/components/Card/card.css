@@ -1,0 +1,28 @@
+img{
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.card-btn{
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    
+    position: absolute;
+    bottom: -800px;
+    transition: all 0.5s ease-in-out;
+    cursor: pointer;
+    display: flex ;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    border-end-start-radius: 10px;
+    border-end-end-radius: 10px;
+    
+}
+
+.card:hover .card-btn{
+    
+    bottom: 0;
+}
