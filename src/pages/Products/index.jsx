@@ -29,6 +29,7 @@ const index = () => {
     const catg = getUniqe(products);
     setUniqeCarg(catg)
 
+    console.log(products)
     const filterFunc = (products) => {
       if (query === '') {
         return products.filter((i) => {
@@ -36,7 +37,7 @@ const index = () => {
         })
       } else {
         return products.filter((i) => {
-          return i.title.toLowerCase().includes(query.toLowerCase()) && (category === "All" || i.category === category) && i.price >= prMinRange && i.price <= prMaxRange;
+          return i.name.toLowerCase().includes(query.toLowerCase()) && (category === "All" || i.category === category) && i.price >= prMinRange && i.price <= prMaxRange;
         })
       }
 
@@ -94,7 +95,7 @@ const index = () => {
             <div className='flex flex-wrap justify-center gap-[30px] my-[50px]'>
               {
                 currentPosts.map((i) => (
-                  <Card key={i._id} image={i.image} price={i.price} id={i._id} title={i.name} product={i} />
+                  <Card key={i._id} image={i.image} price={i.price} id={i._id} title={i.name} product={i} des={i.description} />
                 ))
               }
 

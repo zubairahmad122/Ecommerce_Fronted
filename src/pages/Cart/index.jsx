@@ -85,11 +85,11 @@ const index = () => {
    </div>
    <div className='flex w-full items-center mb-[20px] border-b border-[#eaebef] justify-between'>
      <p className='text-[16px] font-[400]'>Shipping</p>
-     <p className=' text-[16px] font-[500] pb-[10px]'>$56</p>
+     <p className=' text-[16px] font-[500] pb-[10px]'>$5</p>
    </div>
    <div className='flex w-full items-center mb-[20px] border-b border-[#eaebef] justify-between'>
      <p className='text-[18px] font-[400]'>Total</p>
-     <p className=' text-[18px] font-[600] pb-[10px]'>$ {totalPrice + 56}</p>
+     <p className=' text-[18px] font-[600] pb-[10px]'>$ {totalPrice + 5}</p>
    </div>
    </div>
    <Link to='/checkout' className='w-[100%] flex items-center justify-center mt-[20px] mb-[10px] bg-blue-700 hover:bg-blue-800 duration-700 transition-all px-[20px] py-[15px] font-[500] tracking-wide text-[16px] rounded-lg text-white'>CheckOut</Link>

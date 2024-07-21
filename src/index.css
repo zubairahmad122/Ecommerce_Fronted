@@ -81,3 +81,14 @@ li {
     top: 20%;
   }
 }
+
+.spinner{
+  animation: spinner-ani 1s infinite;
+  border-top-color: #bdbdbd;
+}
+
+@keyframes spinner-ani {
+  100%{
+    transform:rotate(360deg);
+  }
+}
