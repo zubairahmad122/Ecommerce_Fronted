@@ -17,7 +17,7 @@ const CartProvider = ({children}) => {
 
 
 
- const url = process.env.URI;
+ const url = import.meta.env.VITE_URI;
 
 
  useEffect(() => {
@@ -25,7 +25,7 @@ const CartProvider = ({children}) => {
         if(token){
            await getCartData(token);
         }else{
-            setCart('')
+            setCart({})
         }
     })()
  },[token])

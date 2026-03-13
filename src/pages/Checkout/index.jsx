@@ -1,144 +1,172 @@
-import React, { useContext, useState } from 'react'
+import { useContext, useState } from 'react'
 import BgNavbar from '../../components/BgNavbar/BgNavbar'
 import { CartContext } from '../../context/CartContext'
 import { ProductContext } from '../../context/ProductsContext'
+import { Link } from 'react-router-dom'
 import axios from 'axios'
+import { HiLockClosed, HiChevronRight } from 'react-icons/hi'
 
-const index = () => {
+const inputCls = 'w-full px-4 py-3 border border-slate-200 rounded-xl text-[14px] text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition-all bg-white'
 
-    const {totalPrice,cart} = useContext(CartContext)
-    const {token,products} = useContext(ProductContext)
-    const url = process.env.URI;
+const Field = ({ label, children }) => (
+  <div className='flex flex-col gap-1.5'>
+    <label className='text-[13px] font-semibold text-slate-600'>{label}</label>
+    {children}
+  </div>
+)
 
+const Checkout = () => {
+  const { totalPrice, cart }  = useContext(CartContext)
+  const { token, products }   = useContext(ProductContext)
+  const url = import.meta.env.VITE_URI
 
+  const [data, setData] = useState({
+    fristName: '', lastName: '', email: '',
+    street: '', city: '', state: '',
+    zipCide: '', country: '', phone: '',
+  })
 
-    const [data,setData] = useState({
-        fristName:"",
-        lastName:"",
-        email:"",
-        street:"",
-        city:"",
-        state:"",
-        zipCide:"",
-        country:"",
-        phone:""
-    })
+  const onChange = (e) => setData(p => ({ ...p, [e.target.name]: e.target.value }))
 
+  const placeOrder = async (e) => {
+    e.preventDefault()
+    const orderItems = products
+      .filter(p => cart[p._id] > 0)
+      .map(p => ({ ...p, quantity: cart[p._id] }))
 
-    const onChangeHandler = (event) => {
-        const name = event.target.name;
-        const value = event.target.value;
+    const res = await axios.post(
+      `${url}/api/order/place`,
+      { address: data, items: orderItems, amount: totalPrice + 5 },
+      { headers: { token } }
+    )
+    if (res.data.success) window.location.replace(res.data.session_url)
+  }
 
-        setData(data => ({...data,[name]:value}))
-    }
+  const cartItems = products.filter(p => cart[p._id] > 0)
+  const delivery  = 5
 
-    const placeOrder = async (e) => {
-        e.preventDefault();
-
-        let orderItems = [];
-        
-        products.map((item) =>{
-            if(cart[item._id] > 0){
-                let itemInfo = item;
-                itemInfo["quantity"] = cart[item._id];
-                orderItems.push(itemInfo);
-            }
-        })
-        let orderData = {
-            address:data,
-            items:orderItems,
-            amount:totalPrice + 5,
-        }
-
-        let response = await axios.post(`${url}/api/order/place`,orderData,{
-            headers:{token}
-        })
-        if(response.data.success){
-            const {session_url} = response.data;
-            window.location.replace(session_url);
-        }
-    }
-
-    
   return (
-   <>
-   <BgNavbar />
-    <section className='max-w-screen-2xl mx-auto '>
-        
-        <form onSubmit={placeOrder} className="flex justify-center md:items-center flex-col min-h-[70vh]  px-5 sm:px-20 gap-20 md:flex-row ">
-            <div className="w-full md:flex-1 flex flex-col gap-y-6 ">
-                <h1 className="text-3xl font-medium">Delivery Information</h1>
+    <>
+      <BgNavbar />
+      <div className='min-h-screen bg-slate-50 pt-20'>
 
+        {/* Breadcrumb */}
+        <div className='max-w-screen-xl mx-auto px-5 sm:px-8 py-4'>
+          <div className='flex items-center gap-1.5 text-[13px] text-slate-400'>
+            <Link to='/cart' className='hover:text-indigo-600 transition-colors'>Cart</Link>
+            <HiChevronRight size={14} />
+            <span className='text-slate-600 font-medium'>Checkout</span>
+          </div>
+        </div>
 
-                <div className='flex w-full justify-center  flex-col md:flex-row items-center gap-3'>
+        <div className='max-w-screen-xl mx-auto px-5 sm:px-8 pb-20'>
+          <h1 className='text-[26px] font-bold text-slate-800 mb-8'>Checkout</h1>
 
-                    {/* name  */}
-                <input required name='fristName' onChange={onChangeHandler}
-                value={data.fristName} type="text" placeholder='Frist name' className='outline-none w-full md:flex-1  border-[1.5px] border-[#65656573] p-3 rounded-md' />
-                <input name='lastName' onChange={onChangeHandler}
-                value={data.lastName} type="text" placeholder='Last name' className='outline-none  w-full md:flex-1 border-[1.5px] border-[#65656573] p-3 rounded-md' />
+          <form onSubmit={placeOrder} className='flex flex-col lg:flex-row gap-8'>
+
+            {/* Left — Delivery Info */}
+            <div className='flex-1 bg-white rounded-3xl border border-slate-100 shadow-sm p-6 sm:p-8'>
+              <h2 className='text-[18px] font-bold text-slate-800 mb-6'>Delivery Information</h2>
+
+              <div className='flex flex-col gap-5'>
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <Field label='First Name'>
+                    <input required name='fristName' value={data.fristName} onChange={onChange} placeholder='John' className={inputCls} />
+                  </Field>
+                  <Field label='Last Name'>
+                    <input required name='lastName' value={data.lastName} onChange={onChange} placeholder='Doe' className={inputCls} />
+                  </Field>
                 </div>
 
+                <Field label='Email Address'>
+                  <input required name='email' type='email' value={data.email} onChange={onChange} placeholder='you@example.com' className={inputCls} />
+                </Field>
 
-                    {/* email  */}
-                <div className='w-full'>
-                <input required name='email' onChange={onChangeHandler}
-                value={data.email} type="text" placeholder='Email address' className='outline-none  border-[1.5px] border-[#65656573] w-full p-3 rounded-md' />
+                <Field label='Street Address'>
+                  <input required name='street' value={data.street} onChange={onChange} placeholder='123 Main St' className={inputCls} />
+                </Field>
+
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <Field label='City'>
+                    <input required name='city' value={data.city} onChange={onChange} placeholder='New York' className={inputCls} />
+                  </Field>
+                  <Field label='State'>
+                    <input required name='state' value={data.state} onChange={onChange} placeholder='NY' className={inputCls} />
+                  </Field>
                 </div>
 
-                <div className='w-full'>
-                <input required name='street' onChange={onChangeHandler}
-                value={data.street} type="text" placeholder='Street' className='outline-none  border-[1.5px] border-[#65656573] w-full p-3 rounded-md' />
+                <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+                  <Field label='ZIP Code'>
+                    <input required name='zipCide' value={data.zipCide} onChange={onChange} placeholder='10001' className={inputCls} />
+                  </Field>
+                  <Field label='Country'>
+                    <input required name='country' value={data.country} onChange={onChange} placeholder='United States' className={inputCls} />
+                  </Field>
                 </div>
 
-                <div className='flex w-full justify-center  flex-col md:flex-row items-center gap-3'>
-                <input required name='city' onChange={onChangeHandler}
-                value={data.city} type="text" placeholder='City' className='outline-none w-full md:flex-1  border-[1.5px] border-[#65656573] p-3 rounded-md' />
-                <input required name='state' onChange={onChangeHandler}
-                value={data.state} type="text" placeholder='state' className='outline-none  w-full md:flex-1 border-[1.5px] border-[#65656573] p-3 rounded-md' />
-                </div>
-
-
-                <div className='flex w-full justify-center  flex-col md:flex-row items-center gap-3'>
-                <input required name='zipCide' onChange={onChangeHandler}
-                value={data.zipCide} type="text" placeholder='zipCode' className='outline-none w-full md:flex-1  border-[1.5px] border-[#65656573] p-3 rounded-md' />
-                <input required name='country' onChange={onChangeHandler}
-                value={data.country} type="text" placeholder='Country' className='outline-none  w-full md:flex-1 border-[1.5px] border-[#65656573] p-3 rounded-md' />
-                </div>
-
-                <div className='w-full'>
-                <input required name='phone' onChange={onChangeHandler}
-                value={data.phone} type="text" placeholder='Phone' className='outline-none  border-[1.5px] border-[#65656573] w-full p-3 rounded-md' />
-                </div>
-
-
+                <Field label='Phone Number'>
+                  <input required name='phone' type='tel' value={data.phone} onChange={onChange} placeholder='+1 (555) 000-0000' className={inputCls} />
+                </Field>
+              </div>
             </div>
 
-            <div className="w-full md:flex-1  flex flex-col gap-y-6 ">
-                <h1 className=" text-2xl md:text-3xl  font-medium">Cart Total</h1>
+            {/* Right — Order Summary */}
+            <div className='lg:w-[380px] flex flex-col gap-4'>
+              <div className='bg-white rounded-3xl border border-slate-100 shadow-sm p-6'>
+                <h2 className='text-[18px] font-bold text-slate-800 mb-5'>Order Summary</h2>
 
-                <div className='flex gap-5 flex-col'>
-
-                    <div className="flex items-center justify-between pb-4 px-2 border-b brder-[#000]">
-                        <p className='text-[18px] text-[#999090ef]'>Subtotal</p>
-                        <p className='text-[18px] font-medium text-[#999090ef]'>${totalPrice}</p>
-                    </div> 
-                    <div className="flex items-center justify-between pb-4 px-2 border-b brder-[#000]">
-                        <p className='text-[18px] text-[#999090ef]'>Delevery Fee</p>
-                        <p className='text-[18px] font-medium text-[#999090ef]'>$5</p>
-                    </div>     
-                     <div className="flex items-center justify-between pb-4 px-2 border-b brder-[#000]">
-                        <p className='text-[18px] text-[#302c2cef]'>Total</p>
-                        <p className='text-[18px] font-medium text-[#302c2cef]'>${totalPrice + 5}</p>
+                {/* Items */}
+                <div className='flex flex-col gap-3 mb-5'>
+                  {cartItems.map(p => (
+                    <div key={p._id} className='flex items-center gap-3'>
+                      <img
+                        src={`${url}/images/${p.image}`}
+                        alt={p.name}
+                        className='w-12 h-12 rounded-xl object-cover border border-slate-100 bg-slate-50'
+                      />
+                      <div className='flex-1 min-w-0'>
+                        <p className='text-[13px] font-semibold text-slate-700 line-clamp-1'>{p.name}</p>
+                        <p className='text-[12px] text-slate-400'>Qty: {cart[p._id]}</p>
+                      </div>
+                      <p className='text-[14px] font-bold text-slate-700 shrink-0'>${p.price * cart[p._id]}</p>
                     </div>
+                  ))}
+                </div>
 
-                    <button className='px-4 py-3 hover:bg-red-700 duration-300 bg-red-500 text-white text-[16px] font-medium rounded-md max-w-[220px]'>Proceed To Payment</button>
+                {/* Totals */}
+                <div className='border-t border-slate-100 pt-4 flex flex-col gap-2'>
+                  <div className='flex justify-between text-[14px] text-slate-500'>
+                    <span>Subtotal</span>
+                    <span className='font-medium text-slate-700'>${totalPrice}</span>
+                  </div>
+                  <div className='flex justify-between text-[14px] text-slate-500'>
+                    <span>Delivery</span>
+                    <span className='font-medium text-slate-700'>${delivery}</span>
+                  </div>
+                  <div className='flex justify-between text-[16px] font-bold text-slate-800 border-t border-slate-100 pt-3 mt-1'>
+                    <span>Total</span>
+                    <span className='text-indigo-600'>${totalPrice + delivery}</span>
+                  </div>
                 </div>
-                </div>
-        </form>
-    </section>
-   </>
+              </div>
+
+              <button
+                type='submit'
+                className='w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl text-[15px] transition-colors shadow-lg shadow-indigo-500/20 flex items-center justify-center gap-2'
+              >
+                <HiLockClosed size={18} />
+                Pay ${totalPrice + delivery}
+              </button>
+
+              <p className='text-center text-[12px] text-slate-400 flex items-center justify-center gap-1'>
+                <HiLockClosed size={12} /> Secured by Stripe
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+    </>
   )
 }
 
-export default index
+export default Checkout

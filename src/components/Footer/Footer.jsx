@@ -1,53 +1,86 @@
-import React from 'react'
-import { BiLogoFacebook, BiLogoInstagram, BiLogoWhatsapp } from 'react-icons/bi'
+import { BiLogoFacebook, BiLogoInstagram, BiLogoTwitter } from 'react-icons/bi'
 import { Link } from 'react-router-dom'
+import { HiMail } from 'react-icons/hi'
+import STORE from '../../config/store'
 
-const Footer = () => {
-  
-  return (
-    <section className='footer bg-[#f9f9f9] mt-[8rem] mb-0'>
-   <div className="main-upper max-w-screen-2xl mx-auto  max-md:flex-col flex px-5 xsm:px-[100px] pt-[100px] pb-[40px] gap-[20px] justify-between items-start">
-  {/* .left  */}
-  <div className='max-md:w-full gap-5 flex flex-col max-md:items-center justify-center'>
-  <div>
-   
-   <Link to={'/'} className=' cursor-pointer text-[20px]  xsm:text-[25px] sm:text-[35px] sm:tracking-normal text-black font-semibold tracking-wide uppercase '>Ikonic <span className=''>Store</span></Link>
+const Footer = () => (
+  <footer className='bg-slate-900 text-white'>
+    <div className='max-w-screen-xl mx-auto px-5 sm:px-8 pt-14 pb-8'>
+      <div className='grid grid-cols-1 sm:grid-cols-2 mdd:grid-cols-4 gap-10 mb-12'>
+
+        {/* Brand */}
+        <div className='sm:col-span-2 mdd:col-span-1'>
+          <Link to='/' className='text-[20px] font-bold tracking-tight'>
+            {STORE.name} <span className='text-indigo-400'>{STORE.nameAccent}</span>
+          </Link>
+          <p className='text-slate-400 text-[13px] mt-3 leading-relaxed max-w-[220px]'>
+            {STORE.footer.about}
+          </p>
+          <div className='flex items-center gap-2 mt-5'>
+            {[BiLogoFacebook, BiLogoInstagram, BiLogoTwitter].map((Icon, i) => (
+              <a key={i} href='#' className='w-8 h-8 rounded-lg bg-slate-800 hover:bg-indigo-600 flex items-center justify-center transition-colors'>
+                <Icon size={16} />
+              </a>
+            ))}
+          </div>
+        </div>
+
+        {/* Shop links */}
+        <div>
+          <h4 className='text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-4'>Shop</h4>
+          <ul className='flex flex-col gap-2.5'>
+            {STORE.footer.links.shop.map(([label, to]) => (
+              <li key={label}>
+                <Link to={to} className='text-slate-400 hover:text-white text-[13px] transition-colors'>{label}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Account links */}
+        <div>
+          <h4 className='text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-4'>Account</h4>
+          <ul className='flex flex-col gap-2.5'>
+            {STORE.footer.links.account.map(([label, to]) => (
+              <li key={label}>
+                <Link to={to} className='text-slate-400 hover:text-white text-[13px] transition-colors'>{label}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Newsletter */}
+        <div>
+          <h4 className='text-[12px] font-bold text-slate-400 uppercase tracking-wider mb-4'>Newsletter</h4>
+          <p className='text-slate-400 text-[13px] mb-4'>Weekly deals straight to your inbox.</p>
+          <form className='flex gap-2' onSubmit={e => e.preventDefault()}>
+            <input
+              type='email'
+              placeholder='Your email'
+              className='flex-1 px-3 py-2.5 bg-slate-800 border border-slate-700 rounded-lg text-[13px] text-white placeholder:text-slate-500 outline-none focus:border-indigo-500 transition-colors'
+            />
+            <button className='px-3.5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg transition-colors shrink-0'>
+              <HiMail size={16} />
+            </button>
+          </form>
+          {STORE.footer.contact.email && (
+            <a href={`mailto:${STORE.footer.contact.email}`} className='flex items-center gap-1.5 text-slate-500 hover:text-slate-300 text-[12px] mt-3 transition-colors'>
+              <HiMail size={13} />
+              {STORE.footer.contact.email}
+            </a>
+          )}
+        </div>
       </div>
-      
-      <ul className={` flex flex-col max-md:items-center  gap-[10px] transition-all ease-out duration-[0.6s] `}>
-        <li  className=' uppercase text-[17px] font-sans font-[600] text-[#141517] hover:text-[#4444e1] duration-500'><Link className='no-underline' to='/'>Home</Link></li>
 
-        <li  className=' uppercase text-[17px] font-sans font-[600] text-[#141517] hover:text-[#4444e1] duration-500'><Link className='no-underline' to='/products'>Products</Link></li>
-      </ul>
-     
-  </div>
-
-  {/* .right  */}
-  <div className='max-md:w-full flex flex-col max-md:items-center justify-center'> 
-  <h2 className='text-[20px] mb-5 font-medium'>Subscribe</h2>
- <div className=" w-[220px] xsm:w-[300px] shadow-sm h-10 bg-white border">
-  <input type="text" required placeholder='Enter Email' className='w-full h-full outline-none border-none px-3' />
- </div>
- <button className='px-7 py-3 bg-[#0274be] hover:bg-blue-700 duration-200 w-[150px] ease-linear mt-5 rounded-sm font-medium tracking-wide text-white'>Subscribe</button>
-  
- </div>
-
-   </div>
-     <hr className='bg-[#1818187a] max-w-screen-2xl  mx-auto text-center h-[1px] w-[80%] border-none' />
-     <div className='w-full h-full  max-w-screen-2xl mx-auto  px-5 xsm:px-[100px] py-5 flex items-center justify-center  md:justify-between flex-wrap'>
-
-     <p className='text-[#444141] text-[14px] xsm:text-[18px] text-center'>Copyright &copy; 2024 All Right Reserved.</p>
-
-<div className='flex  items-center my-5 justify-start gap-[10px]'>
-        <BiLogoFacebook className='hover:text-[#4444e1] transition-all duration-500 ease-linear cursor-pointer hover:scale-110' size={25} />
-        <BiLogoInstagram className='hover:text-[#4444e1] transition-all duration-500 ease-linear cursor-pointer hover:scale-110' size={25} />
-        <BiLogoWhatsapp className='hover:text-[#4444e1] transition-all duration-500 ease-linear cursor-pointer hover:scale-110' size={25} />
+      <div className='border-t border-slate-800 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3'>
+        <p className='text-slate-500 text-[12px]'>{STORE.footer.copyright}</p>
+        <div className='flex items-center gap-5'>
+          <a href='#' className='text-slate-500 hover:text-slate-300 text-[12px] transition-colors'>Privacy Policy</a>
+          <a href='#' className='text-slate-500 hover:text-slate-300 text-[12px] transition-colors'>Terms of Service</a>
+        </div>
       </div>
-
-
-     </div>
-    </section>
-  )
-}
+    </div>
+  </footer>
+)
 
 export default Footer

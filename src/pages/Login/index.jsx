@@ -1,106 +1,106 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
-import bannerImg from '../../assets/Shopingbanner.jpg'
-import BgNavbar from '../../components/BgNavbar/BgNavbar';
-import { ProductContext } from '../../context/ProductsContext';
-import { toast } from 'react-toastify';
-import axios from 'axios';
+import { useContext, useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import BgNavbar from '../../components/BgNavbar/BgNavbar'
+import { ProductContext } from '../../context/ProductsContext'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
-const index = () => {
-  const [loading,setLoading] = useState(false)
+const Login = () => {
+  const [loading,  setLoading]  = useState(false)
+  const [formData, setFormData] = useState({ email: '', password: '' })
+  const { token, setToken }     = useContext(ProductContext)
+  const navigate                = useNavigate()
 
-  const navigate = useNavigate()
+  useEffect(() => {
+    if (token) navigate('/')
+  }, [token])
 
-  const {token,setToken} = useContext(ProductContext)
-
-
-  useEffect(() =>{
-    if(token){
-        navigate('/')
-    }
-  },[token])
-
-  const [formData, setFormData] = useState({
-      email: '',
-      password: '',
-     
-  });
-
-  const handleChange = (e) => {
-      const { name, value, type, checked } = e.target;
-      setFormData(prevData => ({
-          ...prevData,
-          [name]: type === 'checkbox' ? checked : value
-      }));
-  };
+  const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }))
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     setLoading(true)
-    const url = process.env.URI;
-
+    const url = import.meta.env.VITE_URI
     try {
-
-      const response = await axios.post(`${url}/api/user/login`,formData);
-      if(response.data.success){
-          toast.success("Successfuly Login!")
-          setToken(response.data.token);
-          localStorage.setItem("token",response.data.token)
-          setLoading(false)
-          setFormData({
-            email: '',
-            password: '',      
-          })
-          navigate('/')
+      const res = await axios.post(`${url}/api/user/login`, formData)
+      if (res.data.success) {
+        toast.success('Welcome back!')
+        setToken(res.data.token)
+        localStorage.setItem('token', res.data.token)
+        navigate('/')
+      } else {
+        toast.error(res.data.message || 'Login failed')
       }
-      toast.error(response.data.message)
-      setLoading(false)
-    } catch (error) {
-      toast.error("error")
-      console.log(error)
+    } catch {
+      toast.error('Something went wrong')
+    } finally {
       setLoading(false)
     }
-    
-}
+  }
+
   return (
-    <div className=' h-full'>
+    <>
       <BgNavbar />
+      <div className='min-h-screen bg-slate-50 flex items-center justify-center px-5 pt-16'>
+          <div className='w-full max-w-[440px]'>
 
+            {/* Card */}
+            <div className='bg-white rounded-3xl shadow-xl border border-slate-100 px-8 py-10'>
+              <div className='text-center mb-8'>
+                <Link to='/' className='text-[22px] font-bold tracking-tight text-slate-800'>
+                  ZUBZEN <span className='text-indigo-600'>Store</span>
+                </Link>
+                <h1 className='text-[24px] font-bold text-slate-800 mt-4 mb-1'>Welcome back</h1>
+                <p className='text-slate-400 text-[14px]'>Sign in to your account to continue</p>
+              </div>
 
-
-            {/* about sec 1  */}
-            <section style={{ backgroundImage:  `url(${bannerImg})` }} className='w-full mt-0 bg-[#f5f5f6] bg-cover object-center relative   px-[10px] xsm:px-[30px] lg:px-[60px] xll:px-[120px] py-[6rem] mx-auto'>
-                <div className='absolute w-full h-full z-0 top-0 left-0 bg-black opacity-[0.2]'></div>
-                <div className='flex w-full min-h-screen items-center justify-center'>
-                    <form onSubmit={handleSubmit} className='max-w-[600px] relative z-10 px-3 xsm:px-5 py-10 rounded-lg w-[500px] bg-white shadow-lg'>
-                        <h2 className='text-left font-worksans text-[20px] xsm:text-[25px] lg:text-[30px] xll:text-[35px] uppercase font-semibold text-[#3d3d3d]'>Login</h2>
-                        <div>
-                            <div className='flex my-4 flex-col'>
-                                <label className='mb-1'>Email</label>
-                                <input type="email" name="email" placeholder='Email' className='outline-none border-2 rounded-md shadow-lg border-[#443d3d82] px-4 py-2' onChange={handleChange} />
-                            </div>
-
-                            <div className='flex my-4 flex-col'>
-                                <label className='mb-1'>Password</label>
-                                <input name="password" type="password" placeholder='Password' className='outline-none border-2 rounded-md shadow-lg border-[#443d3d82] px-4 py-2' onChange={handleChange} />
-                            </div>
-
-
-
-
-                          
-                        </div>
-
-                        <div className='flex flex-col gap-4 items-center justify-start w-full'>
-                            <button disabled={loading} className={`w-full px-7 py-3 hover:bg-blue-700 duration-300 text-white rounded-lg font-poppins text-[16px] xll:text-[18px] font-medium tracking-wide ${loading ? 'bg-blue-900 opacity-50'  : 'bg-blue-900'}`}>Login</button>
-
-                            <p>No Have Account <Link className='font-semibold hover:text-blue-900 text-green' to='/register'>Register </Link></p>
-                        </div>
-                    </form>
+              <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
+                <div>
+                  <label className='text-[13px] font-semibold text-slate-600 block mb-1.5'>Email</label>
+                  <input
+                    required
+                    type='email'
+                    name='email'
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder='you@example.com'
+                    className='w-full px-4 py-3 border border-slate-200 rounded-xl text-[14px] text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition-all'
+                  />
                 </div>
-            </section>
-        </div>
+
+                <div>
+                  <label className='text-[13px] font-semibold text-slate-600 block mb-1.5'>Password</label>
+                  <input
+                    required
+                    type='password'
+                    name='password'
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder='••••••••'
+                    className='w-full px-4 py-3 border border-slate-200 rounded-xl text-[14px] text-slate-800 placeholder:text-slate-400 outline-none focus:border-indigo-400 focus:ring-2 focus:ring-indigo-400/20 transition-all'
+                  />
+                </div>
+
+                <button
+                  type='submit'
+                  disabled={loading}
+                  className='mt-2 w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold rounded-xl text-[15px] transition-colors shadow-md shadow-indigo-500/20'
+                >
+                  {loading ? 'Signing in…' : 'Sign In'}
+                </button>
+              </form>
+
+              <p className='text-center text-[14px] text-slate-500 mt-6'>
+                Don't have an account?{' '}
+                <Link to='/register' className='text-indigo-600 font-semibold hover:text-indigo-700 transition-colors'>
+                  Create one
+                </Link>
+              </p>
+            </div>
+          </div>
+      </div>
+    </>
   )
 }
 
-export default index
+export default Login

@@ -14,14 +14,14 @@ const index = () => {
 
 
   const verifyPayment = async () => {
-    const url = process.env.URI;
+    const url = import.meta.env.VITE_URI;
 
     const response  = await axios.post(`${url}/api/order/verify`,{
       orderId:orderId,
       success:success
     })
     if(response.data.success){
-      navigate('/myorders')
+      navigate('/order-success')
     }else{
       navigate('/')
     }

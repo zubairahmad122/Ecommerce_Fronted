@@ -33,37 +33,6 @@ li {
   list-style: none !important;
 }
 
-.main-home {
-  background-color: #4062bb;
-  background-image: linear-gradient(316deg, #4062bb 0%, #5200ae 74%);
-}
-
-
-.custom-shape-divider-top-1714501332 {
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    width: 100%;
-    overflow: hidden;
-    line-height: 0;
-    transform: rotate(0deg);
-}
-
-@media screen and (min-width:1600px) {
-  .custom-shape-divider-top-1714501332 {
-    bottom: -10px;
-  }
-}
-.custom-shape-divider-top-1714501332 svg {
-    position: relative;
-    display: block;
-    width: calc(100% + 1.3px);
-    height: 148px;
-}
-
-.custom-shape-divider-top-1714501332 .shape-fill {
-    fill: #FFFFFF;
-}
 
 
 

@@ -1,41 +1,66 @@
-import React, { useContext } from 'react'
-import { Link } from 'react-router-dom';
-import { BiCart, BiPlus, BiShoppingBag } from 'react-icons/bi';
-import './card.css'
-import { CartContext } from '../../context/CartContext';
-const Card = ({image,price,title,id,product,des}) => {
+import { useContext, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { BiCart } from 'react-icons/bi'
+import { CartContext } from '../../context/CartContext'
+import STORE from '../../config/store'
 
-  const url = process.env.URI;
-    const {addToCart}  = useContext(CartContext);
+const Card = ({ image, price, title, id, des, category }) => {
+  const url = import.meta.env.VITE_URI
+  const { addToCart, cart } = useContext(CartContext)
+  const [bounce, setBounce] = useState(false)
+  const qty = cart[id] || 0
+
+  const handleAdd = () => {
+    addToCart(id)
+    setBounce(true)
+    setTimeout(() => setBounce(false), 500)
+  }
+
+  const catLabel = category ? (STORE.categories[category]?.label || category) : null
+
   return (
-    <div className='card relative overflow-hidden w-[85%] xsm:w-[250px] mdd:w-[310px] shadow-sm border-[1px] p-[5px] border-[#c7bbbb8e] rounded-[10px] hover:scale-110 transition-all duration-700 '>
-    <div >
+    <div className='group bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col'>
 
-      <div className='relative'>
+      {/* Image */}
+      <Link to={`/productDetail/${id}`} className='block overflow-hidden bg-slate-50 h-[180px] relative'>
+        <img
+          src={`${url}/images/${image}`}
+          alt={title}
+          loading='lazy'
+          className='w-full h-full object-contain p-3 group-hover:scale-105 transition-transform duration-500'
+        />
+        {qty > 0 && (
+          <span className='absolute top-2 left-2 px-2 py-0.5 bg-indigo-600 text-white text-[10px] font-bold rounded-full'>
+            {qty} in cart
+          </span>
+        )}
+      </Link>
+
+      {/* Content */}
+      <div className='flex flex-col flex-1 p-3'>
+        {catLabel && (
+          <span className='text-[10px] font-semibold text-indigo-500 uppercase tracking-wide mb-1 capitalize'>{catLabel}</span>
+        )}
         <Link to={`/productDetail/${id}`}>
-
-        <img className='w-full h-[200px] sm:h-[180px] mdd:h-[280px] object-cover' loading="lazy" src={`${url}/images/${image}`} alt="Product Image" />
+          <h5 className='text-[13px] font-semibold text-slate-800 hover:text-indigo-600 transition-colors line-clamp-1 mb-1'>{title}</h5>
         </Link>
-        <div
-        className='card-btn'>
+        <p className='text-slate-400 text-[11px] line-clamp-2 mb-3 leading-relaxed flex-1'>{des}</p>
 
-            
-              <button onClick={() => addToCart(id)} className='overflow-hidden flex items-center justify-between w-full px-[10px] xsm:px-[20px] py-[10px] bg-[#2453d4]  text-[10px] ssm:text-[12px] xsm:text-[14px] font-semibold hover:bg-red-600 text-white transition-all ease-linear duration-500 border-none rounded-sm'>
-                AddTo Cart 
-             
-                <BiCart  size={18} />
-              </button>
+        <div className='flex items-center justify-between mt-auto'>
+          <div>
+            <p className='text-[16px] font-extrabold text-slate-900'>${price}</p>
+          </div>
+          <button
+            onClick={handleAdd}
+            className={`flex items-center gap-1 px-3 py-2 text-white text-[12px] font-semibold rounded-xl transition-all active:scale-95
+              ${bounce ? 'bg-emerald-500 scale-95' : 'bg-indigo-600 hover:bg-indigo-700'}`}
+          >
+            <BiCart size={14} />
+            {bounce ? '✓' : 'Add'}
+          </button>
         </div>
       </div>
-      
     </div>
-      <div className='my-[5px] px-[3px]'>
-        <h5 className='text-[16px] my-5 font-semibold'>{title}</h5>
-        <p className='text-[#282727] text-[14px] my-3 font-normal'> {des?.substring(0,100)+' ...'}</p>
-        <p className='text-[#544d4d] font-bold'>Price:$ {price}</p>
-        </div>
-     
-  </div>
   )
 }
 

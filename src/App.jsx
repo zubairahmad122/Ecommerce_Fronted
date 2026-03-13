@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { RotatingSquare } from 'react-loader-spinner';
-import { Home, Products, ProductDetail, Cart, Checkout, Login, Register, Verify, Myorders } from './pages';
+import { Home, Products, ProductDetail, Cart, Checkout, Login, Register, Verify, Myorders, OrderSuccess, Profile } from './pages';
 import { Footer } from './components/index';
 import { ProductContext } from './context/ProductsContext';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +28,7 @@ const App = () => {
       visible={true}
       height={100}
       width={100}
-      color="#0000ff"
+      color="#4f46e5"
       ariaLabel="rotating-square-loading"
     />
   </div>
@@ -44,6 +44,8 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/verify" element={<Verify />} />
         <Route path="/myorders" element={<Myorders />} />
+        <Route path="/order-success" element={<OrderSuccess />} />
+        <Route path="/profile" element={<Profile />} />
       </Routes>
       <ToastContainer
         position="top-right"
