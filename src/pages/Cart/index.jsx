@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { FiMinus, FiPlus, FiTrash2, FiShoppingBag } from 'react-icons/fi'
 import { HiShieldCheck, HiTruck, HiRefresh, HiLockClosed } from 'react-icons/hi'
 import { CartContext } from '../../context/CartContext'
@@ -8,12 +9,20 @@ import BgNavbar from '../../components/BgNavbar/BgNavbar'
 
 const Cart = () => {
   const { cart, removeFromCart, clearCart, totalQuantity, totalPrice, addToCart } = useContext(CartContext)
-  const { products } = useContext(ProductContext)
+  const { products, token } = useContext(ProductContext)
+  const navigate = useNavigate()
   const [confirmClear, setConfirmClear] = useState(false)
   const url      = import.meta.env.VITE_URI
   const SHIPPING = 5
 
   const cartItems = products?.filter(p => cart[p._id] > 0) || []
+
+  // login is only required at checkout
+  const goToCheckout = () => {
+    if (token) return navigate('/checkout')
+    toast.info('Please sign in or create an account to checkout')
+    navigate('/login?redirect=/checkout')
+  }
 
   const removeItem = (id) => {
     const qty = cart[id] || 0
@@ -148,13 +157,13 @@ const Cart = () => {
                   </div>
                 </div>
 
-                <Link
-                  to='/checkout'
+                <button
+                  onClick={goToCheckout}
                   className='w-full flex items-center justify-center gap-2 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-[15px] transition-all shadow-lg shadow-indigo-500/20 hover:shadow-xl hover:shadow-indigo-500/30'
                 >
                   <HiLockClosed size={16} />
                   Proceed to Checkout
-                </Link>
+                </button>
 
                 {/* Trust signals */}
                 <div className='mt-4 flex flex-col gap-2.5 pt-4 border-t border-slate-100'>

@@ -5,7 +5,7 @@ export const ProductContext = createContext();
 const ProductsProvider = ({children}) => {
     const [products, setProducts] = useState([]);
     const [loading, SetLoading] = useState(false);
-    const [token, setToken] = useState('')
+    const [token, setToken] = useState(() => localStorage.getItem('token') || '')
     const [userName, setUserName] = useState('')
 
     useEffect(() => {

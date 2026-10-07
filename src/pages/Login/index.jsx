@@ -1,18 +1,23 @@
 import { useContext, useEffect, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import BgNavbar from '../../components/BgNavbar/BgNavbar'
 import { ProductContext } from '../../context/ProductsContext'
 import { toast } from 'react-toastify'
 import axios from 'axios'
+import Spinner from '../../components/Spinner/Spinner'
 
 const Login = () => {
   const [loading,  setLoading]  = useState(false)
   const [formData, setFormData] = useState({ email: '', password: '' })
   const { token, setToken }     = useContext(ProductContext)
   const navigate                = useNavigate()
+  const [searchParams]          = useSearchParams()
+  // only allow internal paths (e.g. /checkout) as redirect target
+  const redirectParam           = searchParams.get('redirect') || ''
+  const redirectTo              = redirectParam.startsWith('/') && !redirectParam.startsWith('//') ? redirectParam : '/'
 
   useEffect(() => {
-    if (token) navigate('/')
+    if (token) navigate(redirectTo, { replace: true })
   }, [token])
 
   const handleChange = (e) => setFormData(p => ({ ...p, [e.target.name]: e.target.value }))
@@ -27,7 +32,7 @@ const Login = () => {
         toast.success('Welcome back!')
         setToken(res.data.token)
         localStorage.setItem('token', res.data.token)
-        navigate('/')
+        navigate(redirectTo, { replace: true })
       } else {
         toast.error(res.data.message || 'Login failed')
       }
@@ -84,15 +89,15 @@ const Login = () => {
                 <button
                   type='submit'
                   disabled={loading}
-                  className='mt-2 w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white font-semibold rounded-xl text-[15px] transition-colors shadow-md shadow-indigo-500/20'
+                  className='mt-2 w-full py-3.5 bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-semibold rounded-xl text-[15px] transition-colors shadow-md shadow-indigo-500/20'
                 >
-                  {loading ? 'Signing in…' : 'Sign In'}
+                  {loading ? <span className='inline-flex items-center gap-2'><Spinner size={16} /> Signing in…</span> : 'Sign In'}
                 </button>
               </form>
 
               <p className='text-center text-[14px] text-slate-500 mt-6'>
                 Don't have an account?{' '}
-                <Link to='/register' className='text-indigo-600 font-semibold hover:text-indigo-700 transition-colors'>
+                <Link to={`/register${redirectParam ? `?redirect=${encodeURIComponent(redirectParam)}` : ''}`} className='text-indigo-600 font-semibold hover:text-indigo-700 transition-colors'>
                   Create one
                 </Link>
               </p>
